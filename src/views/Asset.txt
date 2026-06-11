@@ -1,0 +1,156 @@
+import cors from "cors";
+import express from "express";
+import db from "./mysql.js";
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+const tablesToTruncate = [
+  "components_assets",
+  "consumables_users",
+  "accessories_checkout",
+  "license_seats",
+
+  "kits_accessories",
+  "kits_consumables",
+  "kits_licenses",
+  "kits_models",
+
+  "action_logs",
+  "asset_logs",
+  "asset_uploads",
+
+  "maintenances",
+
+  "checkout_acceptances",
+  "checkout_requests",
+  "requested_assets",
+
+  "components",
+  "consumables",
+  "accessories",
+  "licenses",
+  "assets",
+  "kits"
+];
+
+app.get("/reset-data", async (req, res) => {
+  const connection = await db.getConnection();
+
+  try {
+    const currentUserId = parseInt(req.query.currentUserId);
+
+    if (!currentUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "currentUserId manquant",
+      });
+    }
+
+    const results = [];
+
+    await connection.beginTransaction();
+
+    await connection.query("SET FOREIGN_KEY_CHECKS = 0");
+
+    // Supprimer tous les utilisateurs sauf celui connecté
+    const [usersResult] = await connection.query(
+      "DELETE FROM users WHERE id != ?",
+      [currentUserId]
+    );
+
+    results.push({
+      table: "users",
+      status: "ok",
+      deleted: usersResult.affectedRows,
+    });
+
+    console.log(
+      `[reset] ${usersResult.affectedRows} utilisateur(s) supprimé(s)`
+    );
+    console.log(
+      `[reset] Utilisateur #${currentUserId} conservé`
+    );
+
+    // Nettoyage optionnel
+    try {
+      await connection.query("DELETE FROM login_attempts");
+    } catch {}
+
+    try {
+      await connection.query("DELETE FROM users_groups");
+    } catch {}
+
+    // Vider les tables métier
+    for (const table of tablesToTruncate) {
+      try {
+
+        const [result] = await connection.query(
+          `DELETE FROM ${table}`
+        );
+
+        try {
+          await connection.query(
+            `ALTER TABLE ${table} AUTO_INCREMENT = 1`
+          );
+        } catch {}
+
+        results.push({
+          table,
+          status: "ok",
+          deleted: result.affectedRows,
+        });
+
+        console.log(
+          `[reset] ${table} → ${result.affectedRows} ligne(s)`
+        );
+
+      } catch (err) {
+
+        results.push({
+          table,
+          status: "error",
+          message: err.message,
+        });
+
+        console.error(
+          `[reset] Erreur ${table}: ${err.message}`
+        );
+      }
+    }
+
+    await connection.query("SET FOREIGN_KEY_CHECKS = 1");
+
+    await connection.commit();
+
+    res.json({
+      success: true,
+      message: "Réinitialisation terminée",
+      results,
+    });
+
+  } catch (err) {
+
+    await connection.rollback();
+
+    console.error("[reset] Erreur :", err.message);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+
+  } finally {
+
+    connection.release();
+
+  }
+});
+
+app.listen(3099, () => {
+  console.log(
+    "[reset-server] En écoute sur http://localhost:3099"
+  );
+});
