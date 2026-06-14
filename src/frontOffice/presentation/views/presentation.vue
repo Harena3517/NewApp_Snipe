@@ -17,6 +17,7 @@ const priorityId = ref(null)
 const selectedAssets = ref([])
 const statusSelectionne = ref(null)
 const date = ref (null)
+<<<<<<< HEAD
 const showMoveModal = ref(false)
 
 const nouveauTitre = ref("")
@@ -28,6 +29,8 @@ const statusDestination = ref(null)
 const modalInprogress = ref(false)
 const montantInprogress = ref("")
 const choixReouverture = ref(false)
+=======
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 
 onMounted(async () => {
   await store.loadAsset()
@@ -43,6 +46,7 @@ const getSetting = (statusId) => {
 const dropTicket = async (stat) => {
   if (!tickDrag.value) return
   if (tickDrag.value.status_id === stat.id) return
+<<<<<<< HEAD
   statusDestination.value = stat
   //allea2 
   const ancienSetting = getSetting(tickDrag.value.status_id)
@@ -92,6 +96,23 @@ const confirmerDeplacement = async () => {
   showMoveModal.value = false
   tickDrag.value = null
 }
+=======
+  const nouveauTitre = prompt("Nouveau titre", tickDrag.value.titre)
+  if (!nouveauTitre) return
+  const nouvelleDescription = prompt("Nouvelle description", tickDrag.value.description)
+  if (!nouvelleDescription) return
+  const nouvelleDate = prompt("Date prévue (AAAA-MM-JJ)" ,  tickDrag.value.date || "")
+  if (!nouvelleDate){alert("Veuillez saisir une date")
+  return
+  }
+  if (!nouvelleDate) {alert("Veuillez saisir une date")
+  return }
+  await store.changeStatus(tickDrag.value.id, stat.id, nouveauTitre, nouvelleDescription , nouvelleDate)
+  
+  tickDrag.value = null
+}
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 const voirDetail = (tick) => {
   ticketDetail.value = tick
   showDetail.value = true
@@ -101,6 +122,10 @@ const makaId = (statusId) => {
   showForm.value = true
 }
 const findNew = store.status.find (s => s.name === "vaovao")
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 const enregistrer = async () => {
   if (!titre.value) { alert("Titre obligatoire"); return }
   if (selectedAssets.value.length === 0) { alert("Veuillez saisir un Asset"); return }
@@ -133,6 +158,7 @@ const itemsParsed = (items) => {
   try { return JSON.parse(items) } catch { return [] }
 }
 
+<<<<<<< HEAD
 const gererReouverture = async () => {
   if (!nouveauMontant.value || Number(nouveauMontant.value) <= 0) {
     alert("Veuillez saisir un montant valide.")
@@ -182,6 +208,9 @@ const gererAnnulation = async () => {
     }
   }
 }
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 </script>
 
 <template>
@@ -326,6 +355,7 @@ const gererAnnulation = async () => {
 
       </div>
     </div>
+<<<<<<< HEAD
     <div
   v-if="showMoveModal"
   class="modal-overlay"
@@ -421,6 +451,10 @@ const gererAnnulation = async () => {
   </div>
 </div>
 </div>
+=======
+
+  </div>
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 </template>
 
 <style scoped>

@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import axios from "axios"
 import api from "../../../services/api.js"
+=======
+import api from "../../../services/api.js"
+import axios from "axios"
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 const ticketApi = axios.create({ baseURL: "http://localhost:3099" })
 
 export default {
@@ -15,10 +20,13 @@ export default {
     const response = await api.get("/hardware", { params: { limit: 500 } })
     return response.data.rows || []
   } ,
+<<<<<<< HEAD
     async getCat () {
       const response = await api.get("/categories")
       return response.data
     },
+=======
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     async getStatus() {
     const response = await ticketApi.get(`/status`)
     return response.data
@@ -50,6 +58,7 @@ export default {
     const response = await ticketApi.get("/ticket-history")
     return response.data
   },
+<<<<<<< HEAD
   async addCost(ticketId, montant, categoryName, groupeId) {
       const response = await ticketApi.post("/ticket-cost", {
         ticket_id: ticketId,
@@ -68,3 +77,6 @@ export default {
   return response.data
 }
 }
+=======
+}
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8

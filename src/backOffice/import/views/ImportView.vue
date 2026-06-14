@@ -1,5 +1,6 @@
 <script setup>
 import { useImportStore } from "../store/importStore"
+<<<<<<< HEAD
 import { ref, computed, watch, nextTick } from "vue"
 import Papa from "papaparse"
 
@@ -36,6 +37,19 @@ watch(() => store.importLogs.length, async () => {
 
 // =============================================
 // UTILS NETTOYAGE & VALIDATION DATE/NB
+=======
+import { ref } from "vue"
+import Papa from "papaparse"
+
+const store = useImportStore()
+const file = ref(null)
+const loading = ref(false)
+const message = ref("")
+const erreur = ref("")
+
+// =============================================
+// UTILS NETTOYAGE
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 // =============================================
 
 const detectSeparateur = (text) => {
@@ -57,6 +71,7 @@ const nettoyerNombre = (val) => {
   return isNaN(num) ? null : num
 }
 
+<<<<<<< HEAD
 const isValidDateValue = (year, month, day) => {
   const y = parseInt(year, 10)
   const m = parseInt(month, 10)
@@ -68,6 +83,8 @@ const isValidDateValue = (year, month, day) => {
   return dateObj.getFullYear() === y && dateObj.getMonth() === m - 1 && dateObj.getDate() === d
 }
 
+=======
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 const formaterDate = (val) => {
   if (!val) return null
 
@@ -78,6 +95,7 @@ const formaterDate = (val) => {
     .replace(/\n/g, "")
     .replace(/\t/g, "")
 
+<<<<<<< HEAD
   let match
   if ((match = val.match(/^(\d{2})[\/\-](\d{2})[\/\-](\d{4})$/))) {
     const [_, d, m, y] = match
@@ -90,6 +108,18 @@ const formaterDate = (val) => {
       return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
     }
   }
+=======
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(val)) {
+    const [d, m, y] = val.split("/")
+    return `${y}-${m}-${d}`
+  }
+  if (/^\d{2}-\d{2}-\d{4}$/.test(val)) {
+    const [d, m, y] = val.split("-")
+    return `${y}-${m}-${d}`
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val
+  if (/^\d{4}\/\d{2}\/\d{2}$/.test(val)) return val.replace(/\//g, "-")
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 
   const d = new Date(val)
   if (!isNaN(d.getTime())) return d.toISOString().split("T")[0]
@@ -109,6 +139,7 @@ const nettoyerRow = (row) => {
 
   return {
     ...row,
+<<<<<<< HEAD
     asset_tag:     get("asset_tag", "Asset Tag", "AssetTag", "tag"),
     name:          get("name", "Name", "nom"),
     serial:        get("serial", "Serial", "numero_serie", "serial_number"),
@@ -122,6 +153,21 @@ const nettoyerRow = (row) => {
     email:         get("email", "Email", "e-mail"),
     purchase_date: formaterDate(get("purchase_date", "Purchase Date", "PurchaseDate", "date_achat")),
     purchase_cost: nettoyerNombre(get("purchase_cost", "Purchase Cost", "PurchaseCost", "prix_achat"))
+=======
+    asset_tag:     get("asset_tag", "Asset Tag", "AssetTag"),
+    name:          get("name", "Name"),
+    serial:        get("serial", "Serial"),
+    category:      get("category", "Category"),
+    manufacturer:  get("manufacturer", "Manufacturer"),
+    model:         get("model", "Model"),
+    status:        get("status", "Status"),
+    company:       get("company", "Company"),
+    department:    get("department", "Department"),
+    user:          get("user", "User"),
+    email:         get("email", "Email"),
+    purchase_date: formaterDate(get("purchase_date", "Purchase Date", "PurchaseDate")),
+    purchase_cost: nettoyerNombre(get("purchase_cost", "Purchase Cost", "PurchaseCost"))
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   }
 }
 
@@ -149,6 +195,7 @@ const nettoyerTicketRow = (row) => {
 }
 
 // =============================================
+<<<<<<< HEAD
 // VALIDATION LOGIC
 // =============================================
 
@@ -302,17 +349,38 @@ const choisirFichier = (event) => {
   store.resetImportState()
   erreur.value = ""
   message.value = ""
+=======
+// IMPORT ASSETS
+// =============================================
+
+const choisirFichier = (event) => {
+  file.value = event.target.files[0]
+  message.value = ""
+  erreur.value = ""
+}
+
+const importer = () => {
+  if (!file.value) {
+    erreur.value = "Veuillez choisir un fichier CSV"
+    return
+  }
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 
   const reader = new FileReader()
   reader.onload = (e) => {
     const text = e.target.result
     const sep = detectSeparateur(text)
 
+<<<<<<< HEAD
     Papa.parse(fileObj, {
+=======
+    Papa.parse(file.value, {
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       header: true,
       delimiter: sep,
       skipEmptyLines: true,
       transformHeader: (h) => h.trim().replace(/^\uFEFF/, ""),
+<<<<<<< HEAD
       complete: (results) => {
         const headers = results.meta.fields || []
         
@@ -348,17 +416,66 @@ const choisirTicket = (event) => {
   store.resetImportState()
   erreur.value = ""
   message.value = ""
+=======
+
+      complete: async (results) => {
+        loading.value = true
+        message.value = ""
+        erreur.value = ""
+
+        try {
+          const rows = results.data
+            .map(nettoyerRow)
+            .filter(r => r.asset_tag)
+
+          await store.import(rows)
+          message.value = `Import terminé : ${rows.length} assets importés`
+        } catch (e) {
+          erreur.value = "Erreur lors de l'import"
+        } finally {
+          loading.value = false
+        }
+      }
+    })
+  }
+  reader.readAsText(file.value, "UTF-8")
+}
+
+// =============================================
+// IMPORT TICKETS
+// =============================================
+
+const ticketFile = ref(null)
+const loadingTickets = ref(false)
+
+const choisirTicket = (event) => {
+  ticketFile.value = event.target.files[0]
+  message.value = ""
+  erreur.value = ""
+}
+
+const importerTickets = () => {
+  if (!ticketFile.value) {
+    erreur.value = "Veuillez choisir un fichier CSV Tickets"
+    return
+  }
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 
   const reader = new FileReader()
   reader.onload = (e) => {
     const text = e.target.result
     const sep = detectSeparateur(text)
 
+<<<<<<< HEAD
     Papa.parse(fileObj, {
+=======
+    Papa.parse(ticketFile.value, {
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       header: true,
       delimiter: sep,
       skipEmptyLines: true,
       transformHeader: (h) => h.trim().replace(/^\uFEFF/, ""),
+<<<<<<< HEAD
       complete: (results) => {
         const headers = results.meta.fields || []
         
@@ -552,11 +669,37 @@ const statusBadgeText = (status) => {
   if (status === "valid") return "Conforme"
   if (status === "warning") return "Alerte"
   return "Invalide"
+=======
+
+      complete: async (results) => {
+        loadingTickets.value = true
+        message.value = ""
+        erreur.value = ""
+
+        try {
+          const rows = results.data
+            .map(nettoyerTicketRow)
+            .filter(r => r.Num_Ticket)
+
+          await store.importTickets(rows)
+          message.value = `Import tickets terminé : ${rows.length} ticket(s)`
+        } catch (e) {
+          console.error(e)
+          erreur.value = "Erreur lors de l'import tickets"
+        } finally {
+          loadingTickets.value = false
+        }
+      }
+    })
+  }
+  reader.readAsText(ticketFile.value, "UTF-8")
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 }
 </script>
 
 <template>
   <div class="page">
+<<<<<<< HEAD
     <div class="page-header">
       <h1 class="page-title">Portail d'Importation</h1>
       <p class="page-subtitle">Visualisez, analysez et validez vos donnees CSV avant de lancer l'importation.</p>
@@ -921,11 +1064,84 @@ const statusBadgeText = (status) => {
         </div>
       </div>
     </div>
+=======
+    <h1 class="page-title">Import de données</h1>
+
+    <!-- ASSETS -->
+    <div class="import-card">
+      <div class="card-header">
+        <span class="card-icon">📦</span>
+        <div>
+          <h2>Assets CSV</h2>
+          <p>Importer les matériels vers Snipe-IT</p>
+        </div>
+      </div>
+
+      <div class="file-zone">
+        <input
+          type="file"
+          accept=".csv"
+          @change="choisirFichier"
+          :disabled="loading"
+          id="fileAsset"
+          class="file-input"
+        />
+        <label for="fileAsset" class="file-label" :class="{ disabled: loading }">
+          📂 {{ file ? file.name : "Choisir un fichier CSV" }}
+        </label>
+      </div>
+
+      <button class="btn-import" @click="importer" :disabled="loading">
+        {{ loading ? "⏳ Import en cours..." : "Importer les assets" }}
+      </button>
+
+      <p v-if="loading" class="msg-loading">⏳ Chargement en cours...</p>
+      <p v-if="message" class="msg-success">✅ {{ message }}</p>
+      <p v-if="erreur" class="msg-error">❌ {{ erreur }}</p>
+    </div>
+
+    <div class="separator"></div>
+
+    <!-- TICKETS -->
+    <div class="import-card">
+      <div class="card-header">
+        <span class="card-icon">🎫</span>
+        <div>
+          <h2>Tickets CSV</h2>
+          <p>Importer les tickets vers SQLite</p>
+        </div>
+      </div>
+
+      <div class="file-zone">
+        <input
+          type="file"
+          accept=".csv"
+          @change="choisirTicket"
+          :disabled="loadingTickets"
+          id="fileTicket"
+          class="file-input"
+        />
+        <label for="fileTicket" class="file-label" :class="{ disabled: loadingTickets }">
+          📂 {{ ticketFile ? ticketFile.name : "Choisir un fichier CSV" }}
+        </label>
+      </div>
+
+      <button class="btn-import" @click="importerTickets" :disabled="loadingTickets">
+        {{ loadingTickets ? "⏳ Import en cours..." : "Importer les tickets" }}
+      </button>
+
+      <p v-if="loadingTickets" class="msg-loading">⏳ Chargement en cours...</p>
+      <p v-if="message" class="msg-success">✅ {{ message }}</p>
+      <p v-if="erreur" class="msg-error">❌ {{ erreur }}</p>
+    </div>
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   </div>
 </template>
 
 <style scoped>
 .page {
+<<<<<<< HEAD
   padding: 40px 24px;
   background: var(--bg);
   min-height: 100vh;
@@ -984,10 +1200,23 @@ const statusBadgeText = (status) => {
   background: var(--accent-bg);
   color: var(--accent);
   border: 1px solid var(--accent-border);
+=======
+  padding: 32px 24px;
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 28px;
+  font-weight: 700;
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 }
 
 /* CARD */
 .import-card {
+<<<<<<< HEAD
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -1025,11 +1254,52 @@ const statusBadgeText = (status) => {
   width: 100%;
 }
 
+=======
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 580px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-icon {
+  font-size: 2rem;
+  background: #f4f6f8;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.card-header h2 {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin: 0 0 4px 0;
+}
+
+.card-header p {
+  font-size: 0.82rem;
+  color: #999;
+  margin: 0;
+}
+
+/* FILE INPUT */
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 .file-input {
   display: none;
 }
 
 .file-label {
+<<<<<<< HEAD
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1046,6 +1316,23 @@ const statusBadgeText = (status) => {
 .file-label:hover:not(.disabled) {
   border-color: var(--accent);
   background: var(--accent-bg);
+=======
+  display: block;
+  padding: 12px 16px;
+  border: 2px dashed #d0d7de;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.file-label:hover {
+  border-color: #3498db;
+  background: #eaf4fb;
+  color: #2980b9;
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 }
 
 .file-label.disabled {
@@ -1053,6 +1340,7 @@ const statusBadgeText = (status) => {
   cursor: not-allowed;
 }
 
+<<<<<<< HEAD
 .upload-icon-text {
   font-size: 2rem;
   font-weight: 800;
@@ -1156,10 +1444,29 @@ const statusBadgeText = (status) => {
 }
 
 .btn-primary:disabled {
+=======
+/* BOUTON */
+.btn-import {
+  background: #2c3e50;
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-import:hover:not(:disabled) { background: #1a252f; }
+
+.btn-import:disabled {
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   opacity: 0.4;
   cursor: not-allowed;
 }
 
+<<<<<<< HEAD
 /* MESSAGES BOXES */
 .msg-box {
   padding: 14px 20px;
@@ -1529,4 +1836,18 @@ const statusBadgeText = (status) => {
 .log-success { color: #34d399; }
 .log-warning { color: #fbbf24; }
 .log-error { color: #f87171; }
+=======
+/* MESSAGES */
+.msg-loading { color: #888; font-size: 0.88rem; }
+.msg-success { color: #27ae60; font-size: 0.88rem; font-weight: 600; }
+.msg-error   { color: #e74c3c; font-size: 0.88rem; font-weight: 600; }
+
+/* SEPARATEUR */
+.separator {
+  height: 1px;
+  background: #e0e0e0;
+  max-width: 580px;
+  margin: 8px 0;
+}
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 </style>

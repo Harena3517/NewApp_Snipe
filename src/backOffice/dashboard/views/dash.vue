@@ -12,12 +12,17 @@ onMounted(() => {
 
 <template>
   <div class="page">
+<<<<<<< HEAD
 
     <h1 class="page-title">Dashboard</h1>
 
     <div class="cards-row">
 
       <!-- HARDWARE -->
+=======
+    <h1 class="page-title">Dashboard</h1>
+    <div class="cards-row">
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       <div class="section-card">
         <div class="section-header">
           <div>
@@ -25,7 +30,10 @@ onMounted(() => {
             <p class="section-total">{{ store.totalHardware }}</p>
           </div>
         </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
         <div class="detail-list">
           <div
             v-for="(nombre, cat) in store.details"
@@ -37,8 +45,11 @@ onMounted(() => {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 
       <!-- TICKETS -->
+=======
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       <div class="section-card">
         <div class="section-header">
           <div>

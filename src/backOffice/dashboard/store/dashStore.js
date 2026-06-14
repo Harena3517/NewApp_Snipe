@@ -25,6 +25,7 @@ export const useDashStore =
         this.details = compteur
       },
 async loadTickets() {
+<<<<<<< HEAD
 
   try {
 
@@ -43,4 +44,16 @@ async loadTickets() {
 
 }
     }
+=======
+  try {
+    const data = await DashService.getTicketCount()
+    console.log("dashboard tickets =", data)
+    this.totalTickets = data.total
+    this.ticketDetail = data.details
+  } catch (error) {
+    console.error("Erreur dashboard :", error)
+  }
+}
+  }
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   })

@@ -4,9 +4,18 @@ import db from "./mysql.js"
 import sqliteDb from "./sqlite.js"
 
 const app = express()
+<<<<<<< HEAD
 app.use(cors())
 app.use(express.json())
 const tablesToReset = [
+=======
+
+app.use(cors())
+app.use(express.json())
+
+const tablesToReset = [
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   "components_assets",
   "consumables_users",
   "accessories_checkout",
@@ -51,13 +60,27 @@ const tablesToReset = [
 ===================================== */
 
 app.get("/tickets/test", (req, res) => {
+<<<<<<< HEAD
   try {
     sqliteDb.prepare("SELECT 1").get()
+=======
+
+  try {
+
+    sqliteDb.prepare("SELECT 1").get()
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.json({
       success: true,
       message: "SQLite OK"
     })
+<<<<<<< HEAD
   } catch (error) {
+=======
+
+  } catch (error) {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.status(500).json({
       success: false,
       message: error.message
@@ -68,17 +91,33 @@ app.get("/tickets/test", (req, res) => {
 /* =====================================
    STATUS
 ===================================== */
+<<<<<<< HEAD
 app.post("/tickets/status", (req, res) => {
   const { name } = req.body
+=======
+
+app.post("/tickets/status", (req, res) => {
+
+  const { name } = req.body
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const result = sqliteDb.prepare(`
     INSERT OR IGNORE INTO t_status(name)
     VALUES (?)
   `).run(name)
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const status = sqliteDb.prepare(`
     SELECT *
     FROM t_status
     WHERE name = ?
   `).get(name)
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   sqliteDb.prepare(`
     INSERT OR IGNORE INTO settings(
       status_id,
@@ -90,6 +129,10 @@ app.post("/tickets/status", (req, res) => {
     status.id,
     status.name
   )
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   res.json(status)
 })
 
@@ -98,20 +141,40 @@ app.post("/tickets/status", (req, res) => {
 ===================================== */
 
 app.post("/tickets/priority", (req, res) => {
+<<<<<<< HEAD
   try {
     const { name } = req.body
+=======
+
+  try {
+
+    const { name } = req.body
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     sqliteDb.prepare(`
       INSERT OR IGNORE INTO t_priority(name)
       VALUES (?)
     `).run(name)
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     const priority =
       sqliteDb.prepare(`
         SELECT *
         FROM t_priority
         WHERE name = ?
       `).get(name)
+<<<<<<< HEAD
     res.json(priority)
   } catch (error) {
+=======
+
+    res.json(priority)
+
+  } catch (error) {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.status(500).json({
       success: false,
       message: error.message
@@ -121,9 +184,21 @@ app.post("/tickets/priority", (req, res) => {
 /* =====================================
    TICKETS
 ===================================== */
+<<<<<<< HEAD
 app.put("/tickets/:id/status", (req, res) => {
     const id = req.params.id
     const { status_id, titre, description } = req.body
+=======
+app.put(
+  "/tickets/:id/status",
+  (req, res) => {
+    const id = req.params.id
+    const {
+      status_id,
+      titre,
+      description
+    } = req.body
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     sqliteDb.prepare(`
       UPDATE tickets
       SET
@@ -137,13 +212,25 @@ app.put("/tickets/:id/status", (req, res) => {
       description,
       id
     )
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.json({
       success: true
     })
 })
 app.post("/tickets", (req, res) => {
+<<<<<<< HEAD
   try {
     const ticket = req.body
+=======
+
+  try {
+
+    const ticket = req.body
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     const result =
       sqliteDb.prepare(`
         INSERT INTO tickets (
@@ -167,11 +254,21 @@ app.post("/tickets", (req, res) => {
         ticket.priority_id,
         ticket.items
       )
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.json({
       success: true,
       id: result.lastInsertRowid
     })
+<<<<<<< HEAD
   } catch (error) {
+=======
+
+  } catch (error) {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.status(500).json({
       success: false,
       message: error.message
@@ -179,11 +276,19 @@ app.post("/tickets", (req, res) => {
   }
 })
 app.get("/tickets/dashboard", (req, res) => {
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const total =
     sqliteDb.prepare(`
       SELECT COUNT(*) as total
       FROM tickets
     `).get()
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const details =
     sqliteDb.prepare(`
 SELECT
@@ -194,11 +299,16 @@ JOIN t_status s
   ON t.status_id = s.id
 GROUP BY s.name
     `).all()
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   res.json({
     total: total.total,
     details
   })
 })
+<<<<<<< HEAD
 app.get("/ticket-cost", async (req, res) => {
   try {
     const rows = sqliteDb.prepare(`
@@ -219,10 +329,20 @@ app.get("/ticket-cost", async (req, res) => {
 })
 app.delete("/tickets/:id", (req, res) => {
   const id = req.params.id
+=======
+app.delete("/tickets/:id", (req, res) => {
+
+  const id = req.params.id
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   sqliteDb.prepare(`
     DELETE FROM tickets
     WHERE id = ?
   `).run(id)
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   res.json({
     success: true
   })
@@ -255,18 +375,36 @@ app.put("/tickets/:id", (req, res) => {
     date,
     req.params.id
   )
+<<<<<<< HEAD
   console.log("Lignes modifiées :", result.changes)
+=======
+
+  console.log("Lignes modifiées :", result.changes)
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const ticket = sqliteDb.prepare(`
     SELECT *
     FROM tickets
     WHERE id = ?
   `).get(req.params.id)
+<<<<<<< HEAD
   console.log("Ticket après update :", ticket)
+=======
+
+  console.log("Ticket après update :", ticket)
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   res.json({ success: true })
 })
 
 app.get("/tickets/:id", (req, res) => {
+<<<<<<< HEAD
   const id = req.params.id
+=======
+
+  const id = req.params.id
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const ticket = sqliteDb.prepare(`
     SELECT
       t.*,
@@ -279,19 +417,39 @@ app.get("/tickets/:id", (req, res) => {
       ON t.priority_id = p.id
     WHERE t.id = ?
   `).get(id)
+<<<<<<< HEAD
   res.json(ticket)
 })
 app.get("/settings", (req, res) => {
+=======
+
+  res.json(ticket)
+
+})
+app.get("/settings", (req, res) => {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const settings = sqliteDb.prepare(`
     SELECT *
     FROM settings
     ORDER BY status_id
   `).all()
+<<<<<<< HEAD
   res.json(settings)
 })
 
 app.put("/settings", (req, res) => {
   const settings = req.body
+=======
+
+  res.json(settings)
+
+})
+app.put("/settings", (req, res) => {
+
+  const settings = req.body
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const stmt = sqliteDb.prepare(`
     UPDATE settings
     SET
@@ -299,12 +457,19 @@ app.put("/settings", (req, res) => {
       label = ?
     WHERE status_id = ?
   `)
+<<<<<<< HEAD
   for (const setting of settings) {
+=======
+
+  for (const setting of settings) {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     stmt.run(
       setting.color,
       setting.label,
       setting.status_id
     )
+<<<<<<< HEAD
   }
   res.json({
     success: true
@@ -332,6 +497,16 @@ app.put("/settings/:id", (req, res) => {
     message: "Setting mis à jour"
   });
 });
+=======
+
+  }
+
+  res.json({
+    success: true
+  })
+
+})
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 app.get("/tickets", (req, res) => {
   const tickets = sqliteDb.prepare(`
     SELECT t.*, s.name as status_name, p.name as priority_name
@@ -351,11 +526,19 @@ app.get("/priorities", (req, res) => {
   res.json(rows)
 })
 app.post("/ticket-history", (req, res) => {
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const {
     ticket_id,
     status_id,
     date_time
   } = req.body
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const result = sqliteDb.prepare(`
     INSERT INTO ticket_history (
       ticket_id,
@@ -375,21 +558,38 @@ app.post("/ticket-history", (req, res) => {
   })
 })
 app.get("/ticket-history", (req, res) => {
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   const history = sqliteDb.prepare(`
     SELECT
       h.id,
       h.date_time,
       t.titre,
       s.name AS status_name
+<<<<<<< HEAD
     FROM ticket_history h
     JOIN tickets t
       ON h.ticket_id = t.id
     JOIN t_status s
       ON h.status_id = s.id
+=======
+
+    FROM ticket_history h
+
+    JOIN tickets t
+      ON h.ticket_id = t.id
+
+    JOIN t_status s
+      ON h.status_id = s.id
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     ORDER BY h.date_time DESC
   `).all()
 
   res.json(history)
+<<<<<<< HEAD
  
 })
 app.post("/ticket-cost", (req, res) => {
@@ -463,6 +663,10 @@ app.delete("/ticket-cost/last/:ticket_id", (req, res) => {
   })
 })
 
+=======
+
+})
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 // app.get("/hardware/count", async (req, res) => {
 
 //   const connection = await db.getConnection()
@@ -489,6 +693,7 @@ app.delete("/ticket-cost/last/:ticket_id", (req, res) => {
 ===================================== */
 
 app.get("/reset-data", async (req, res) => {
+<<<<<<< HEAD
   const connection = await db.getConnection()
   try {
     const results = []
@@ -498,21 +703,53 @@ app.get("/reset-data", async (req, res) => {
     )
     // USERS
     try {
+=======
+
+  const connection = await db.getConnection()
+
+  try {
+
+    const results = []
+
+    await connection.beginTransaction()
+
+    await connection.query(
+      "SET FOREIGN_KEY_CHECKS = 0"
+    )
+
+    // USERS
+
+    try {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       await connection.query(`
         DELETE FROM users_groups
         WHERE user_id != 1
       `)
+<<<<<<< HEAD
     } catch {}
     try {
+=======
+
+    } catch {}
+
+    try {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       const [usersResult] =
         await connection.query(`
           DELETE FROM users
           WHERE id != 1
         `)
+<<<<<<< HEAD
+=======
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       results.push({
         table: "users",
         deleted: usersResult.affectedRows
       })
+<<<<<<< HEAD
     } catch {}
     try {
       await connection.query(
@@ -522,20 +759,57 @@ app.get("/reset-data", async (req, res) => {
     // TABLES MYSQL
     for (const table of tablesToReset) {
       try {
+=======
+
+    } catch {}
+
+    try {
+
+      await connection.query(
+        "DELETE FROM login_attempts"
+      )
+
+    } catch {}
+
+    // TABLES MYSQL
+
+    for (const table of tablesToReset) {
+
+      try {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
         const [result] =
           await connection.query(
             `DELETE FROM ${table}`
           )
+<<<<<<< HEAD
         try {
           await connection.query(
             `ALTER TABLE ${table} AUTO_INCREMENT = 1`
           )
         } catch {}
+=======
+
+        try {
+
+          await connection.query(
+            `ALTER TABLE ${table} AUTO_INCREMENT = 1`
+          )
+
+        } catch {}
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
         results.push({
           table,
           deleted: result.affectedRows
         })
+<<<<<<< HEAD
       } catch (err) {
+=======
+
+      } catch (err) {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
         console.error(
           table,
           err.message
@@ -543,44 +817,88 @@ app.get("/reset-data", async (req, res) => {
       }
     }
 
+<<<<<<< HEAD
 
 sqliteDb.prepare("DELETE FROM montant_tickets").run()
 sqliteDb.prepare("DELETE FROM ticket_history").run()
+=======
+sqliteDb.exec("PRAGMA foreign_keys = OFF")
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 sqliteDb.prepare("DELETE FROM settings").run()
 sqliteDb.prepare("DELETE FROM tickets").run()
 sqliteDb.prepare("DELETE FROM t_status").run()
 sqliteDb.prepare("DELETE FROM t_priority").run()
+<<<<<<< HEAD
 sqliteDb.prepare(`
   DELETE FROM sqlite_sequence
   WHERE name IN (
     'montant_tickets',
     'ticket_history',
+=======
+
+sqliteDb.prepare(`
+  DELETE FROM sqlite_sequence
+  WHERE name IN (
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     'settings',
     'tickets',
     't_status',
     't_priority'
   )
 `).run()
+<<<<<<< HEAD
     await connection.query(
       "SET FOREIGN_KEY_CHECKS = 1"
     )
     await connection.commit()
+=======
+
+sqliteDb.exec("PRAGMA foreign_keys = ON")
+
+    await connection.query(
+      "SET FOREIGN_KEY_CHECKS = 1"
+    )
+
+    await connection.commit()
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.json({
       success: true,
       message: "Reset terminé",
       results: results
     })
+<<<<<<< HEAD
   } catch (error) {
     await connection.rollback()
+=======
+
+  } catch (error) {
+
+    await connection.rollback()
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
     res.status(500).json({
       success: false,
       message: error.message
     })
+<<<<<<< HEAD
   } finally {
     connection.release()
   }
 })
 app.listen(3099, () => {
+=======
+
+  } finally {
+
+    connection.release()
+  }
+})
+
+app.listen(3099, () => {
+
+>>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   console.log(
     "[reset-server] http://localhost:3099"
   )
