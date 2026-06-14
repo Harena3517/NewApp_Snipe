@@ -1,0 +1,180 @@
+API Snipe-It  
+- Assets
+/hardware get
+/hardware post
+/hardware/:id get
+/hardware/bytag/:asset_tag get
+/hardware/byserial/:serial get
+/hardware/:id put
+/hardware/:id patch
+/hardware/:id del
+/hardware/:id/checkout post
+/hardware/:id/checkin post
+/hardware/:id/restore post
+/hardware/audit/overdue get
+/hardware/:id/licenses get
+/hardware/labels post
+/hardware/audit post
+/hardware/:id/audit post
+/hardware/audit/due get
+Updating Custom Fields via API
+Handling Asset Files
+/hardware/:id/files get
+/hardware/:id/files post
+/hardware/:id/files/:file_id/delete del
+/hardware/:id/files/:file_id get
+- Custom Fields & Fieldsets
+/fields get
+/fields post
+/fields/:id get
+/fields/:id put
+/fields/:id patch
+/fields/:id del
+/fields/:id/associate post
+/fields/:id/disassociate post
+/fieldsets get
+/fieldsets post
+/fieldsets/:id get
+/fieldsets/:id put
+/fieldsets/:id del
+/fieldsets/:id/fields get
+- Companies
+/companies get
+/companies post
+/companies/:id get
+/companies/:id put
+/companies/:id patch
+/companies/:id del
+- Locations
+/locations get
+/locations post
+/locations/:id get
+/locations/:id put
+/locations/:id patch
+/locations/:id del
+- Accessories
+/accessories get
+/accessories post
+/accessories/:id get
+/accessories/:id put
+/accessories/:id patch
+/accessories/:id del
+/accessories/:id/checkedout get
+/accessories/:id/checkin post
+/accessories/:id/checkout post
+- Consumables
+/consumables get
+/consumables post
+/consumables/:id get
+/consumables/:id put
+/consumables/:id patch
+/consumables/:id del
+/consumables/:id/checkout post
+-Components
+/components get
+/componentspost
+/components/:id get
+/components/:id put
+/components/:id patch
+/components/:id del
+/components/:id/assets get
+/components/:id/checkout post
+/components/:id/checkin post
+- Users
+/users get
+/users post
+/users/:id get
+/users/:id patch
+/users/:id del
+/users/:id put
+/users/:id/restore post
+/users/:id/assets get
+/users/:id/accessories get
+/users/:id/licenses get
+/users/:id/eulas get
+/users/me get
+- Status Labels
+/statuslabels get
+/statuslabels post
+/statuslabels/:id get
+/statuslabels/:id put
+/statuslabels/:id patch
+/statuslabels/:id del
+/statuslabels/:id/assetlist get
+
+-Models
+/models get
+/models post
+/models/:id get
+/models/:id put
+/models/:id patch
+/models/:id del
+
+- Handling Model Files
+/models/:id/files get
+/models/:id/files post
+/models/:id/files/:file_id del
+
+- Licenses
+/licenses get
+/licenses/ post
+/licenses/:id get
+/licenses/:id put
+/licenses/:id patch
+/licenses/:id del
+/licenses/:id/seats get
+/licenses/:id/seats/:seat_id get
+/licenses/:id/seats/:seat_id
+/licenses/:id/seats/:seat_id patch
+/licenses/:id/seats/:seat_id put
+
+-Categories
+/categories get
+/categories post
+/categories/:id get
+/categories/:id put
+/categories/:id patch
+/categories/:id del
+
+- Manufacturers
+/manufacturers get
+/manufacturers post
+/manufacturers/:id get
+/manufacturers/:id put
+/manufacturers/:id patch
+/manufacturers/:id del
+
+-Suppliers
+/suppliers get
+/suppliers/:id get
+
+- Asset Maintenances
+/maintenances get
+/maintenances post
+/maintenances/:id put
+/maintenances/:id patch
+/maintenances/:id del
+
+- Departments
+/departments get
+/departments post
+/departments/:id get
+/departments/:id put
+/departments/:id patch
+/departments/:id del
+
+-Groups
+/groups get
+/groups post
+/groups/:id get
+/groups/:id put
+/groups/:id patch
+/groups/:id del
+
+-Settings
+/settings/backups get
+/settings/backups/download/:fileget
+-Reports
+/reports/activity get
+- Misc
+Version get
