@@ -11,10 +11,6 @@ import TicketFiche from '../backOffice/tickets/views/ticketFiche.vue'
 import AssetView from '../frontOffice/assets/views/assetView.vue'
 import HistoryView from '../frontOffice/presentation/views/HistoryView.vue'
 import Presentation from '../frontOffice/presentation/views/presentation.vue'
-<<<<<<< HEAD
-import Cost from '../frontOffice/cost/views/cost.vue'
-=======
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 import FrontTicket from '../frontOffice/tickets/views/createTickets.vue'
 import FicheFront from '../frontOffice/tickets/views/ticketFiche.vue'
 const router = createRouter({
@@ -32,12 +28,7 @@ const router = createRouter({
     { path: '/presentation' , component: Presentation},
     { path: '/setting' , component: Setting},
     { path: '/tickets/edit/:id' , component: EditTicket},
-<<<<<<< HEAD
-    { path: '/history' , component: HistoryView},
-    { path : '/cost' , component: Cost}
-=======
     { path: '/history' , component: HistoryView}
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   ]
 })
 
@@ -45,10 +36,7 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
   const pagesProtegees = ["/reset", "/import" , "/dash" , "/tickets" , "/setting" ]
-<<<<<<< HEAD
-=======
 
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
   if (pagesProtegees.includes(to.path)) {
     if (!authStore.isAuthenticated) {
       next("/login")

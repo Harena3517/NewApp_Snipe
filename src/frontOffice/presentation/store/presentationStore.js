@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { defineStore } from "pinia"
 import presentationService
 from "../services/presentationService"
@@ -28,38 +27,10 @@ export const usepresentationStore =defineStore("usepresentationStore",
       },
       async loadTickets() {
         this.ticks = await presentationService.getAllTickets()
-=======
-import { defineStore } from "pinia";
-import presentationStore from "../services/presentationService";
-
-export const usepresentationStore = defineStore("usepresentationStore" , {
-    state :() =>({
-        assets : [],
-        status : [],
-        priorities : [],
-        ticks: [],
-        selectedTicket: null,
-        history :[]
-    }),
-    actions : {
-        async loadAsset() {
-            this.assets = await presentationStore.getAssets()
-            this.status = await presentationStore.getStatus()
-            this.priorities = await presentationStore.getPriorities()
-        },
-        async createTicket (data){
-            return await presentationStore.createTicket(data)
-        } ,
-      async loadTickets(){
-        const data = await presentationStore.getAllTickets()
-        console.log(data)
-        this.ticks = data 
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
       },
       setSelectedTicket(ticket) {
         this.selectedTicket = ticket
       },
-<<<<<<< HEAD
       async changeStatus(
         ticketId,
         statusId,
@@ -68,22 +39,12 @@ export const usepresentationStore = defineStore("usepresentationStore" , {
         date
       ) {
         await presentationService.changeStatus(
-=======
-      async changeStatus(ticketId, statusId, titre, description, date) {
-
-        console.log("ticketId =", ticketId)
-        console.log("statusId =", statusId)
-        console.log("date =", date)
-
-        await presentationStore.changeStatus(
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
           ticketId,
           statusId,
           titre,
           description,
           date
         )
-<<<<<<< HEAD
         await presentationService.addHistory(
           ticketId,
           statusId,
@@ -98,29 +59,90 @@ export const usepresentationStore = defineStore("usepresentationStore" , {
         const data = await presentationService.getCost()
         this.costs = data
       },
-      async addCost(ticketId, montant, categoryName, groupeId) {
-  await presentationService.addCost(ticketId, montant, categoryName, groupeId)
-},
-async deleteTicketCosts(ticketId) {
-  await presentationService.deleteLastCost(ticketId)
-}
+      async addCost(ticketId, montant, categoryName, groupeId, type) {
+        await presentationService.addCost(ticketId, montant, categoryName, groupeId, type)
+      },
+
+      async deleteTicketCosts(ticketId) {
+        await presentationService.deleteLastCost(ticketId)
+      },
+      async fermerTicket(ticket, montant) {
+        let items = []
+        try {
+          items = JSON.parse(ticket.items || "[]")
+        } catch {
+          items = []
+        }
+        if(items.length > 0){
+          const montantParAsset = Number(montant) / items.length
+          const groupeId = Date.now().toString()
+          for(const tag of items){
+            const asset = this.assets.find(
+              a => a.asset_tag === tag
+            )
+            const categoryName = asset?.category?.name || "Inconnu"
+            await this.addCost( ticket.id, montantParAsset, categoryName, groupeId,"cout_saisie")
+          }
+        }
+        // CLOSED = adapter l'id
+        const closedStatus =
+          this.status.find(
+            s => s.name?.toLowerCase().includes("closed")
+          )
+        if(closedStatus){
+          await this.changeStatus( ticket.id,closedStatus.id,ticket.titre,ticket.description,ticket.date)
+        }
+      },
+        async reouvrirTicket(ticket, montant) {
+            let items = []
+            try {
+              items = JSON.parse(ticket.items || "[]")
+            } catch {
+              items = []
+            }
+            if(items.length > 0){
+              const montantParAsset = Number(montant) / items.length
+              const groupeId = Date.now().toString()
+              for(const tag of items){
+                const asset = this.assets.find(a => a.asset_tag === tag)
+                const categoryName = asset?.category?.name || "Inconnu"
+                await this.addCost(ticket.id,montantParAsset,categoryName,groupeId,"reouverture")
+              }
+            }
+            const inProgress =
+              this.status.find(
+                s => s.name?.toLowerCase().includes("progress"))
+            if(inProgress){
+              await this.changeStatus(
+                ticket.id,
+                inProgress.id,
+                ticket.titre,
+                ticket.description,
+                ticket.date
+              )
+            }
+          },
+          async annulerFermeture(ticket) {
+          await this.deleteTicketCosts(
+            ticket.id
+          )
+          const inProgress =
+            this.status.find(
+              s =>
+                s.name?.toLowerCase().includes("progress")
+            )
+
+          if(inProgress){
+
+            await this.changeStatus(
+              ticket.id,
+              inProgress.id,
+              ticket.titre,
+              ticket.description,
+              ticket.date
+            )
+          }
+        }
     }
   }
 )
-=======
-
-        await presentationStore.addHistory(
-          ticketId,
-          statusId,
-          date
-        )
-
-        await this.loadTickets()
-      },
-    async loadHistiry(){
-      const data = await presentationStore.getHistory()
-      this.history = data
-    }
-    }
-})
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8

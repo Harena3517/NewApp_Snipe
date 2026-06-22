@@ -17,7 +17,6 @@ const priorityId = ref(null)
 const selectedAssets = ref([])
 const statusSelectionne = ref(null)
 const date = ref (null)
-<<<<<<< HEAD
 const showMoveModal = ref(false)
 
 const nouveauTitre = ref("")
@@ -29,8 +28,6 @@ const statusDestination = ref(null)
 const modalInprogress = ref(false)
 const montantInprogress = ref("")
 const choixReouverture = ref(false)
-=======
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 
 onMounted(async () => {
   await store.loadAsset()
@@ -46,73 +43,65 @@ const getSetting = (statusId) => {
 const dropTicket = async (stat) => {
   if (!tickDrag.value) return
   if (tickDrag.value.status_id === stat.id) return
-<<<<<<< HEAD
   statusDestination.value = stat
-  //allea2 
   const ancienSetting = getSetting(tickDrag.value.status_id)
   const ancienLabel = ancienSetting?.label?.toLowerCase() || ""
   const etaitClosed = ancienLabel.includes("closed") || ancienLabel.includes("terminé") || ancienLabel.includes("vita")
   const nouveauLabel = stat.label?.toLowerCase() || stat.name?.toLowerCase() || ""
-  const devientInprogress = nouveauLabel.includes("in progress") || nouveauLabel.includes("en cours") || nouveauLabel.includes("efa manao")
-  if(etaitClosed && devientInprogress){
-    nouveauMontant.value =""
+  const devientClosed = nouveauLabel.includes("closed") || nouveauLabel.includes("terminé") || nouveauLabel.includes("vita")
+  const devientInprogress = nouveauLabel.includes("progress") || nouveauLabel.includes("cours") || nouveauLabel.includes("efa manao")
+  // CLOSED -> IN PROGRESS
+  if (etaitClosed && devientInprogress) {
+    nouveauMontant.value = ""
     choixReouverture.value = false
     modalInprogress.value = true
     return
   }
-  nouveauTitre.value = tickDrag.value.titre
-  nouvelleDescription.value = tickDrag.value.description
-  nouvelleDate.value = tickDrag.value.date || ""
-  nouveauMontant.value = ""
-  showMoveModal.value = true
-}
-const confirmerDeplacement = async () => {
-  if (!nouveauTitre.value) { alert("Titre obligatoire"); return }
-  if (!nouvelleDescription.value) { alert("Description obligatoire"); return }
-  if (!nouvelleDate.value) { alert("Date obligatoire"); return }
-  const label = getSetting(statusDestination.value.id)?.label?.toLowerCase() || ""
-  const estClosed = label.includes("closed") || label.includes("terminé") || label.includes("vita")
-  const estInprogress = 
+  // N'importe quoi -> CLOSED
+  if (devientClosed) {
+    nouveauMontant.value = ""
+    modalClosed.value = true
+    return
+  }
+  // autres colonnes
+  const nouveauTitre = prompt( "Nouveau titre",tickDrag.value.titre)
+  if (!nouveauTitre) return
+  const nouvelleDescription = prompt(
+    "Nouvelle description",
+    tickDrag.value.description
+  )
+  if (!nouvelleDescription) return
+  const nouvelleDate = prompt(
+    "Date prévue",
+    tickDrag.value.date || ""
+  )
+  if (!nouvelleDate) return
   await store.changeStatus(
     tickDrag.value.id,
-    statusDestination.value.id,
-    nouveauTitre.value,
-    nouvelleDescription.value,
-    nouvelleDate.value
+    stat.id,
+    nouveauTitre,
+    nouvelleDescription,
+    nouvelleDate
   )
-  if (estClosed && nouveauMontant.value) {
-    let items = []
-    try { items = JSON.parse(tickDrag.value.items) } catch { items = [] }
-    if (items.length > 0) {
-      const montantParItem = Number(nouveauMontant.value) / items.length
-      const groupeId = Date.now().toString()   // ← ajouter ici
-      for (const tag of items) {
-        const asset = store.assets.find(a => a.asset_tag === tag)
-        const categoryName = asset?.category?.name || "Inconnu"
-        await store.addCost(tickDrag.value.id, montantParItem, categoryName, groupeId)  // ← ajouter groupeId
-      }
-    }
-  }
-  showMoveModal.value = false
   tickDrag.value = null
 }
-=======
-  const nouveauTitre = prompt("Nouveau titre", tickDrag.value.titre)
-  if (!nouveauTitre) return
-  const nouvelleDescription = prompt("Nouvelle description", tickDrag.value.description)
-  if (!nouvelleDescription) return
-  const nouvelleDate = prompt("Date prévue (AAAA-MM-JJ)" ,  tickDrag.value.date || "")
-  if (!nouvelleDate){alert("Veuillez saisir une date")
-  return
-  }
-  if (!nouvelleDate) {alert("Veuillez saisir une date")
-  return }
-  await store.changeStatus(tickDrag.value.id, stat.id, nouveauTitre, nouvelleDescription , nouvelleDate)
-  
-  tickDrag.value = null
-}
+const confirmerDeplacement = async () => {
 
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
+  if (!nouveauMontant.value) {
+    alert("Montant obligatoire")
+    return
+  }
+
+  await store.fermerTicket(
+    tickDrag.value,
+    nouveauMontant.value
+  )
+
+  modalClosed.value = false
+  tickDrag.value = null
+
+  await store.loadTickets()
+}
 const voirDetail = (tick) => {
   ticketDetail.value = tick
   showDetail.value = true
@@ -121,11 +110,7 @@ const makaId = (statusId) => {
   selectedAssets.value = statusId
   showForm.value = true
 }
-const findNew = store.status.find (s => s.name === "vaovao")
-<<<<<<< HEAD
-=======
-
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
+const findNew = store.status.find (s => s.name === "new")
 const enregistrer = async () => {
   if (!titre.value) { alert("Titre obligatoire"); return }
   if (selectedAssets.value.length === 0) { alert("Veuillez saisir un Asset"); return }
@@ -158,69 +143,41 @@ const itemsParsed = (items) => {
   try { return JSON.parse(items) } catch { return [] }
 }
 
-<<<<<<< HEAD
 const gererReouverture = async () => {
-  if (!nouveauMontant.value || Number(nouveauMontant.value) <= 0) {
-    alert("Veuillez saisir un montant valide.")
+
+  if (!nouveauMontant.value) {
+    alert("Montant obligatoire")
     return
   }
-  await store.changeStatus(
-    tickDrag.value.id,
-    statusDestination.value.id,
-    tickDrag.value.titre,
-    tickDrag.value.description,
-    tickDrag.value.date || new Date().toISOString().split('T')[0]
+
+  await store.reouvrirTicket(
+    tickDrag.value,
+    nouveauMontant.value
   )
-  let items = []
-  try { items = JSON.parse(tickDrag.value.items) } catch { items = [] }
-    if (items.length > 0) {
-      const montantAdditionnelParItem = Number(nouveauMontant.value) / items.length
-      const groupeId = Date.now().toString()   // ← ajouter ici
-      for (const tag of items) {
-        const asset = store.assets.find(a => a.asset_tag === tag)
-        const categoryName = asset?.category?.name || "Inconnu"
-        await store.addCost(tickDrag.value.id, montantAdditionnelParItem, categoryName, groupeId)  // ← ajouter groupeId
-      }
-    }
+
   modalInprogress.value = false
   tickDrag.value = null
-  await store.loadTickets() 
+
+  await store.loadTickets()
 }
 const gererAnnulation = async () => {
-  if (confirm("Confirmez-vous l'annulation ? Le montant inséré dans Closed sera supprimé.")) {
-    try {
-      // 1. Supprimer le dernier montant
-      await store.deleteTicketCosts(tickDrag.value.id)
-      await store.changeStatus(
-        tickDrag.value.id,
-        statusDestination.value.id,
-        tickDrag.value.titre,
-        tickDrag.value.description,
-        tickDrag.value.date || new Date().toISOString().split("T")[0]
-      )
 
-      modalInprogress.value = false
-      tickDrag.value = null
-      await store.loadTickets()
-    } catch (error) {
-      console.error("Erreur annulation :", error)
-      alert("Impossible d'annuler.")
-    }
-  }
+  await store.annulerFermeture(
+    tickDrag.value
+  )
+
+  modalInprogress.value = false
+  tickDrag.value = null
+
+  await store.loadTickets()
 }
-=======
-
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 </script>
 
 <template>
   <div class="kanban-page">
-
     <div class="kanban-header">
       <h2>Kanban Tickets</h2>
     </div>
-
-    <!-- BOARD -->
     <div class="kanban-board">
       <div
         v-for="stat in store.status"
@@ -230,7 +187,6 @@ const gererAnnulation = async () => {
         @dragover.prevent
         @drop="dropTicket(stat)"
       >
-        <!-- HEADER COLONNE -->
         <div class="col-header">
           <span class="col-title">
             {{ getSetting(stat.id)?.label || stat.name }}
@@ -240,7 +196,7 @@ const gererAnnulation = async () => {
           </span>
         </div>
         <button
-          v-if="stat.name === 'vaovao'"
+          v-if="stat.name === 'new'"
           class="btn-add-ticket"
           @click="showForm = true"
         >
@@ -259,23 +215,17 @@ const gererAnnulation = async () => {
           <div class="ticket-priority" :class="tick.priority_name?.toLowerCase()">
             {{ tick.priority_name }}
           </div>
-          
         </div>
-
       </div>
     </div>
-
-    <!-- FORM OVERLAY -->
     <div v-if="showForm" class="modal-overlay" @click.self="showForm = false">
       <div class="modal-card">
         <button class="modal-close" @click="showForm = false">✕</button>
         <h3>Nouveau Ticket</h3>
-
         <div class="field">
           <label>Titre *</label>
           <input v-model="titre" placeholder="Titre du ticket" />
         </div>
-
         <div class="field">
           <label>Description</label>
           <textarea v-model="description" placeholder="Description..."></textarea>
@@ -355,7 +305,6 @@ const gererAnnulation = async () => {
 
       </div>
     </div>
-<<<<<<< HEAD
     <div
   v-if="showMoveModal"
   class="modal-overlay"
@@ -451,10 +400,6 @@ const gererAnnulation = async () => {
   </div>
 </div>
 </div>
-=======
-
-  </div>
->>>>>>> daf0be827e6be12262e7287fc37c80dad2a90dd8
 </template>
 
 <style scoped>
