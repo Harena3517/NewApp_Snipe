@@ -1,25 +1,21 @@
 import { defineStore } from "pinia"
-import presentationService from "../../presentation/services/presentationService"
+import costService from "../service/costService"
 
-export const useCostStore = defineStore("costStore", {
+export const useCostStore = defineStore("cost", {
   state: () => ({
     cost: [],
-    loading: false
+    ticketCosts: [],
+    details: []
   }),
 
   actions: {
-async loadRapport() {
-  try {
-    console.log("LOAD RAPPORT START")
+    async loadRapport() {
+      this.cost = await costService.getCost()
+      this.ticketCosts = await costService.getCostByTicket()
+    },
 
-    const data = await presentationService.getCost()
-
-    console.log("API COST =>", data)
-
-    this.cost = data
-  } catch (error) {
-    console.error("❌ ERROR API COST =>", error)
-  }
-}
+    async loadDetails() {
+      this.details = await costService.getCostDetail()
+    }
   }
 })

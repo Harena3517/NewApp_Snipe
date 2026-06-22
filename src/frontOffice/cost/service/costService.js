@@ -1,20 +1,24 @@
-// src/frontOffice/cost/service/costService.js
-
 import axios from "axios"
 
 const ticketApi = axios.create({
   baseURL: "http://localhost:3099"
 })
 
-export const useCostService = {
+const costService = {
+  async getCost() {
+    const response = await ticketApi.get("/ticket-cost")
+    return response.data
+  },
 
-async getCost () {
-  console.log("TEST SERVICE")
+  async getCostByTicket() {
+    const response = await ticketApi.get("/ticket-cost-by-ticket")
+    return response.data
+  },
 
-  return [
-    { category_name: "Desktop", total: 850 },
-    { category_name: "Laptop", total: 425 }
-  ]
+  async getCostDetail() {
+    const response = await ticketApi.get("/ticket-cost-detail")
+    return response.data
+  }
 }
 
-}
+export default costService
